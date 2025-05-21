@@ -30,12 +30,30 @@
             <span style="color:@(server.IsOnline ? "green" : "red" )">
                 @(server.IsOnline ? "online" : "offline")
             </span>
-            &nbsp;
-            <a href="/servers/@server.ServerId" class="bnt btn-link">Edit</a>
-        </li>
+            &nbsp;<a href="/servers/@server.ServerId" class="bnt btn-link">Edit</a>
+            <EditForm Model="server"
+                      FormName="@($"form-server-{server.ServerId}")"
+                      OnValidSubmit="@(() => DeleteServer(server.ServerId))">
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </EditForm>
+           
+                   </li>
     }
 </ul>
+
+<p>
+    <a href="/servers/add" class="btn btn-primary" >Add</a>
+</p>
 @code {
     private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
     private List<string> cities = CitiesRepository.GetCities();
+
+    public void DeleteServer(int serverId)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(serverId, 0);
+
+        ServersRepository.DeleteServer(serverId);
+
+        servers = ServersRepository.GetServersByCity("Toronto");
+    }
 }
