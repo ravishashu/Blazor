@@ -1,5 +1,6 @@
 ﻿@page "/servers"
 
+@rendermode InteractiveServer
 <h3>Servers</h3>
 <br />
 <br />
@@ -8,10 +9,10 @@
         @foreach (var city in cities)
         {
             <div class="col">
-                <div class="card">
+                <div class="card @(selectedCity.Equals(city, StringComparison.OrdinalIgnoreCase) ? "border-primary":"")">
                     <img src="@($"/images/{city}.png") " class="card-img-top" alt="...">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary" onclick="@(() => { SelectCity(city);})">@city</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => { SelectCity(city); })">@city</button>
                     </div>
                 </div>
             </div>
@@ -19,9 +20,8 @@
 
     </div>
 </div>
-<br />
 
-    <ServerComponent @rendermode="InteractiveServer"></ServerComponent>
+<br />
 
 <br />
 
@@ -50,7 +50,7 @@
 @code {
     private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
     private List<string> cities = CitiesRepository.GetCities();
-
+    private string selectedCity = "Toronto";
     public void DeleteServer(int serverId)
     {
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(serverId, 0);
@@ -63,6 +63,7 @@
     private void SelectCity(string city)
     {
         ArgumentNullException.ThrowIfNull(city);
+        selectedCity = city;
         servers = ServersRepository.GetServersByCity(city);
     }
 }
