@@ -11,7 +11,7 @@
                 <div class="card">
                     <img src="@($"/images/{city}.png") " class="card-img-top" alt="...">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary">@city</button>
+                        <button type="button" class="btn btn-primary" onclick="@(() => { SelectCity(city);})">@city</button>
                     </div>
                 </div>
             </div>
@@ -20,9 +20,9 @@
     </div>
 </div>
 <br />
-<p>
-    <ServerComponent></ServerComponent>
-</p>
+
+    <ServerComponent @rendermode="InteractiveServer"></ServerComponent>
+
 <br />
 
 <ul>
@@ -58,5 +58,11 @@
         ServersRepository.DeleteServer(serverId);
 
         servers = ServersRepository.GetServersByCity("Toronto");
+    }
+
+    private void SelectCity(string city)
+    {
+        ArgumentNullException.ThrowIfNull(city);
+        servers = ServersRepository.GetServersByCity(city);
     }
 }
