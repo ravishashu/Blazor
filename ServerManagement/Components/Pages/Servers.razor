@@ -22,7 +22,11 @@
 </div>
 
 <br />
+<div class="input-group mb-3">
+    <input class="input-group-text" @onchange="HandleServerFilterChange">Search Server</input>
+    <button class="btn btn-outline-secondary" type="button" id="button-search" @onclick="HandleSerch">Search Server</button>
 
+</div>
 <br />
 
 <ul>
@@ -35,12 +39,12 @@
             </span>
             &nbsp;<a href="/servers/@server.ServerId" class="bnt btn-link">Edit</a>
             <EditForm Model="server"
-                      FormName="@($"form-server-{server.ServerId}")"
-                      OnValidSubmit="@(() => DeleteServer(server.ServerId))">
+            FormName="@($"form-server-{server.ServerId}")"
+            OnValidSubmit="@(() => DeleteServer(server.ServerId))">
                 <button type="submit" class="btn btn-primary">Delete</button>
             </EditForm>
-           
-                   </li>
+
+        </li>
     }
 </ul>
 
@@ -51,6 +55,8 @@
     private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
     private List<string> cities = CitiesRepository.GetCities();
     private string selectedCity = "Toronto";
+    private string serverFilter = string.Empty;
+
     public void DeleteServer(int serverId)
     {
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(serverId, 0);
@@ -65,5 +71,23 @@
         ArgumentNullException.ThrowIfNull(city);
         selectedCity = city;
         servers = ServersRepository.GetServersByCity(city);
+    }
+    private void HandleServerFilterChange(ChangeEventArgs args)
+    {
+        serverFilter = args.Value?.ToString() ?? string.Empty;
+       
+    }
+
+    private void HandleSerch()
+    {
+        if (string.IsNullOrWhiteSpace(serverFilter))
+        {
+            servers = ServersRepository.GetServersByCity(selectedCity);
+        }
+        else
+        {
+            servers = ServersRepository.SearchServers(serverFilter);
+            selectedCity = string.Empty;
+        }
     }
 }
