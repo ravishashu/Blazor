@@ -1,0 +1,24 @@
+﻿@page "/todolist"
+
+
+<h3>ToDo</h3>
+<br/>
+
+@if (todoItems.Count == 0)
+{
+    <p>No items in the list.</p>
+}
+else
+{
+    <ul>
+        @foreach (var item in todoItems)
+        {
+            <li @key="@item.Id">@item.Name </li>
+        }
+    </ul>
+})
+
+@code {
+
+    private List<ToDoItem> todoItems = ToDoItemsRepository.GetItems();
+}
