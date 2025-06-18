@@ -4,33 +4,24 @@
 <h3>Servers</h3>
 <br />
 <br />
-<CityListComponent SelectCityCallback="HandleCitySelection"></CityListComponent>
+<CityListComponent SelectCityCallback="HandleCitySelection" @ref="cityListComponent"></CityListComponent>
 
 <br />
-<div class="input-group mb-3">
-    <input class="input-group-text" @bind-value="serverFilter">Search Server</input>
-    <button class="btn btn-outline-secondary" type="button" id="button-search" @onclick="HandleSerch">Search Server</button>
-
-</div>
+<SearchBarComponent SearchServerCallback="HandleSearchServer" @ref="searchBarComponent"></SearchBarComponent>
 <br />
-<ServerListComponent @rendermode="InteractiveServer" CityName="@this.selectedCity">
+<ServerListComponent @rendermode="InteractiveServer" CityName="@this.selectedCity"
+                     SearchFilter="@searchFilter" ></ServerListComponent>
 
-</ServerListComponent>
+
 
 <p>
     <a href="/servers/add" class="btn btn-primary" >Add</a>
 </p>
 @code {
     private string selectedCity = "Toronto";
-    private string _serverFilter = string.Empty;
-    private string serverFilter { 
-        get => _serverFilter;
-        set {
-            _serverFilter = value;
-            // Trigger search when the filter changes
-            HandleSerch();
-        }
-    }
+    private string searchFilter = string.Empty;
+    private CityListComponent? cityListComponent;
+    private SearchBarComponent? searchBarComponent;
 
     private void HandleSerch()
     {
@@ -40,5 +31,14 @@
     private void HandleCitySelection(string cityName)
     {
         selectedCity = cityName;
+        searchFilter = string.Empty;
+        searchBarComponent?.ClearFilter();
+    }
+
+    private void HandleSearchServer(string searchFilter)
+    {
+        this.searchFilter = searchFilter;
+        cityListComponent?.ClearSelection();
+      
     }
 }
