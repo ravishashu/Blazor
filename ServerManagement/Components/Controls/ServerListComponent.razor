@@ -1,0 +1,32 @@
+﻿@if(string.IsNullOrEmpty(CityName))
+{
+    <p class="text-danger">City name is required.</p>
+}
+else if (servers == null || servers.Count == 0)
+{
+    <p class="text-info">No servers found in @CityName.</p>
+}
+else
+{
+    <h3>Servers in @CityName</h3>
+    <ul>
+        <Virtualize Items="this.servers" Context="server">
+            <ServerComponent Server="@server" />
+        </Virtualize>
+    </ul>
+}
+
+
+@code {
+    [Parameter]
+    public string? CityName { get; set; } = "Toronto";
+
+    private List<Server>? servers;
+    protected override void OnParametersSet()
+    {
+        servers = ServersRepository.GetServersByCity(CityName);
+    }
+  
+
+}
+
