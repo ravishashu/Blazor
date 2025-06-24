@@ -8,12 +8,29 @@ else if (servers == null || servers.Count == 0)
 }
 else
 {
-    <h3>Servers in @CityName</h3>
-    <ul class="list-unstyled">
-        <Virtualize Items="this.servers" Context="server">
-            <ServerComponent Server="@server" />
-        </Virtualize>
-    </ul>
+
+    <table class="table table-striped table-hover">
+        <RepeaterComponent Items="this.servers">
+            <Header>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Status</th>
+                    <th>People Online</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            </Header>
+            <Row Context="server">
+                <ServerComponent Server="server" />
+            </Row>
+        </RepeaterComponent>
+       
+       
+ 
+    </table>
+    
 }
 
 
