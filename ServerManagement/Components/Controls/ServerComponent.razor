@@ -1,60 +1,81 @@
-﻿@inject NavigationManager NavigationManager
-﻿@if (Server != null)
-{
-    <li @key="Server.ServerId">
-        @Server.Name in @Server.City is
-        <span style="color:@((Server.IsOnline ? "green" : "red"))">
-            @(Server.IsOnline ? "online" : "offline")
-        </span>
-        &nbsp;
-        &nbsp;
-        @if (Server.IsOnline)
-        {
-            <button type="button" class="btn btn-outline-danger" 
-            @onclick= "@(()=> {Server.IsOnline =false;})">Turn Off</button>
-        }
-        else
-        {
-            <button type="button" class="btn btn-outline-success"
-            @onclick= "@(()=> {Server.IsOnline =true;})">Turn On</button>
-        }
-    
-        &nbsp;
-        @if(Server.IsOnline)
-        {
-            Random random = new Random();
-            int randomNumber = random.Next(1, 500);
-            <text>Ping: @randomNumber ms</text>
-        }
-        else
-        {
-            <text>Ping: N/A</text>
-        }
-    
-
-        <a href="/servers/@Server.ServerId" class="btn btn-link">Edit</a>
-        &nbsp;
-        <EditForm Model="Server"
-                  FormName="@($"form-server-{Server.ServerId}")"
-                  OnValidSubmit="@(() => { DeleteServer(Server.ServerId); })">
-            <button type="submit" class="btn btn-primary">Delete</button>
-        </EditForm>
-    </li>
-}
-
-
-@code {
-    [Parameter]
-    public Server? Server { get; set; }
-
-    
-
-    private void DeleteServer(int serverId)
-    {
-        if (serverId > 0)
-        {
-            ServersRepository.DeleteServer(serverId);
-            NavigationManager.NavigateTo("/servers", true);
-        }
-    }
+﻿@inject NavigationManager NavigationManager  
+﻿@if (Server != null)  
+{  
+    <li @key="Server.ServerId" style="background-color : @GetBackgroundColour()">  
+        @Server.Name in @Server.City is  
+        <span style="color:@((Server.IsOnline ? "green" : "red"))">  
+            @(Server.IsOnline ? "online" : "offline")  
+        </span>  
+        &nbsp;  
+        &nbsp;  
+        @if (Server.IsOnline)  
+        {  
+            <button type="button" class="btn btn-outline-danger"  
+                    @onclick="@(() => { Server.IsOnline = false; })">  
+                Turn Off  
+            </button>  
+        }  
+        else  
+        {  
+            <button type="button" class="btn btn-outline-success"  
+                    @onclick="@(() => { Server.IsOnline = true; })">  
+                Turn On  
+            </button>  
+        }  
+  
+        &nbsp;  
+        @if (Server.IsOnline)  
+        {  
+            Random random = new Random();  
+            int randomNumber = random.Next(1, 500);  
+            <text>Ping: @randomNumber ms</text>  
+        }  
+        else  
+        {  
+            <text>Ping: N/A</text>  
+        }  
+  
+        <a href="/servers/@Server.ServerId" class="btn btn-link">Edit</a>  
+        &nbsp;  
+        <EditForm Model="Server"  
+                  FormName="@($"form-server-{Server.ServerId}")"  
+                  OnValidSubmit="@(() => { DeleteServer(Server.ServerId); })">  
+            <button type="submit" class="btn btn-primary">Delete</button>  
+        </EditForm>  
+    </li>  
+   
+}  
+  
+@code {  
+    [Parameter]  
+    public Server? Server { get; set; }  
+  
+    [CascadingParameter(Name = "SelectedCity")]  
+    public string? SelectedCity { get; set; }  
+  
+    private void DeleteServer(int serverId)  
+    {  
+        if (serverId > 0)  
+        {  
+            ServersRepository.DeleteServer(serverId);  
+            NavigationManager.NavigateTo("/servers", true);  
+        }  
+    }  
+  
+    private string GetBackgroundColour()  
+    {  
+        if (SelectedCity == null)  
+        {  
+            return "white"; // Default background color if no city is selected  
+        }  
+        return SelectedCity switch  
+        {  
+            "Toronto" => "lightblue", // Background color for Toronto  
+            "Vancouver" => "lightgreen", // Background color for Vancouver  
+            "Montreal" => "lightcoral", // Background color for Montreal  
+            "Calgary" => "lightyellow", // Background color for Calgary  
+            "Ottawa" => "lightgray", // Background color for Ottawa  
+            _ => "white" // Default background color for unrecognized cities  
+        };  
+    }  
 }

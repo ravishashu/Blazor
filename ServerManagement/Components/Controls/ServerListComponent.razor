@@ -9,7 +9,7 @@ else if (servers == null || servers.Count == 0)
 else
 {
     <h3>Servers in @CityName</h3>
-    <ul>
+    <ul class="list-unstyled">
         <Virtualize Items="this.servers" Context="server">
             <ServerComponent Server="@server" />
         </Virtualize>
