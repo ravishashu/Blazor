@@ -80,7 +80,7 @@ else
 
 
 @code {
-   private List<Server> servers = ServersRepository.GetServres();
+   private readonly List<Server> servers = ServersRepository.GetServres();
     private PaginationState paginationState = new PaginationState { ItemsPerPage = 5 };
     private void DeleteServer(int serverId)
     {

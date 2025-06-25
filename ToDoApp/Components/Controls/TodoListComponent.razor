@@ -1,0 +1,17 @@
+﻿@if (Items!= null && Items.Count() >0)
+{
+
+    @foreach (var item in Items)
+    {
+        <ToDoItemComponent Item="item" />
+    }
+
+
+}
+
+
+@code {
+    [Parameter] 
+    public List<ToDoItem>? Items { get; set; } 
+
+}
