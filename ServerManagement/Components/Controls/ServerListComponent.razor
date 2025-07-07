@@ -38,6 +38,7 @@
 
     private List<Server>? servers;
 
+    private System.Threading.Timer? Timer;
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -91,7 +92,10 @@
                 servers = ServersRepository.SearchServers(this.SearchFilter);
             }
 
-            StateHasChanged();
+            Timer = new System.Threading.Timer(_ =>
+           {
+               base.InvokeAsync(StateHasChanged);
+           }, null, 5000, 5000);
         }
     }
 
