@@ -1,59 +1,99 @@
-﻿@if(string.IsNullOrEmpty(CityName))
-{
-    <p class="text-danger">City name is required.</p>
-}
-else if (servers == null || servers.Count == 0)
-{
-    <p class="text-info">No servers found in @CityName.</p>
-}
-else
-{
+﻿@inherits BaseComponent
 
-    <table class="table table-striped table-hover">
-        <RepeaterComponent Items="this.servers">
-            <Header>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>City</th>
-                    <th>Status</th>
-                    <th>People Online</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            </Header>
-            <Row Context="server">
-                <ServerComponent Server="server" />
-            </Row>
-        </RepeaterComponent>
-       
-       
- 
-    </table>
-    
-}
-
+<table class="table table-striped">
+    <RepeaterComponent Items="servers">
+        <Header>
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    People Online
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        </Header>
+        <Row Context="server">
+            <ServerComponent Server="server"></ServerComponent>
+        </Row>
+    </RepeaterComponent>
+</table>
 
 @code {
+
     [Parameter]
-    public string? CityName { get; set; } = "Toronto";
+    public string? CityName { get; set; }
 
     [Parameter]
     public string SearchFilter { get; set; } = "";
 
     private List<Server>? servers;
+
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetValue<string>("CityName", out var cityName))
+        {
+            if (cityName != CityName)
+            {
+                base.SetParametersAsync(parameters);
+            }
+        }
+
+        if (parameters.TryGetValue<string>("SearchFilter", out var searchFilter))
+        {
+            if (searchFilter != SearchFilter)
+            {
+                base.SetParametersAsync(parameters);
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
     protected override void OnParametersSet()
     {
-        if (string.IsNullOrWhiteSpace(this.SearchFilter))
+        if (isFirstRender == false)
         {
-            servers = ServersRepository.GetServersByCity(CityName ?? "Toronto");
-        }
-        else
-        {
-            servers = ServersRepository.SearchServers(this.SearchFilter);
+            if (string.IsNullOrWhiteSpace(this.SearchFilter))
+            {
+                servers = ServersRepository.GetServersByCity(CityName ?? "Toronto");
+            }
+            else
+            {
+                servers = ServersRepository.SearchServers(this.SearchFilter);
+            }
         }
     }
-  
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            // Init here
+            if (string.IsNullOrWhiteSpace(this.SearchFilter))
+            {
+                servers = ServersRepository.GetServersByCity(CityName ?? "Toronto");
+            }
+            else
+            {
+                servers = ServersRepository.SearchServers(this.SearchFilter);
+            }
+
+            StateHasChanged();
+        }
+    }
+
 
 }
-
